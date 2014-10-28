@@ -9,8 +9,10 @@ require './installer'
 
 config = YAML.load(File.read('config.yml'))
 
-CALLBACK_URL = "#{config['this_host']}/auth/callback"
-SIGN_UP_URL = "https://www.digitalocean.com/?refcode=#{config['ref_code']}"
+CALLBACK_URL  = "#{config['this_host']}/auth/callback"
+SIGN_UP_URL   = "https://www.digitalocean.com/?refcode=#{config['ref_code']}"
+CLIENT_ID     = config['client_id']
+CLIENT_SECRET = config['client_secret']
 
 enable :sessions, :logging
 
