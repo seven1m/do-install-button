@@ -36,7 +36,9 @@
   };
 
   var updateDropletStatus = function(ip) {
+    var waiting = true;
     $.getJSON('http://' + ip + ':33333/status.jsonp?callback=?', function(data) {
+      waiting = false;
       if (data.status == 'installing') {
         $('.status').text('3. installing software...');
         $('.progress-bar').css('width', '50%');
@@ -50,6 +52,7 @@
         $('.progress-bar').removeClass('active');
       }
     });
+    setTimeout(function() { if (waiting) updateDropletStatus(ip) }, 20000); // retry
   };
 
   updateDOStatus();
