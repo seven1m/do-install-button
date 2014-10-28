@@ -1,0 +1,5 @@
+client_id: your-do-client-id
+client_secret: your-do-client-secret
+cookie_secret: make-up-a-random-secret-here
+ref_code: your-do-ref-code
+this_host: http://the-url-where-this-tool-runs.com
