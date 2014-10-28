@@ -1,0 +1,58 @@
+%p
+  You can log into your new Droplet at: <code id="host">(waiting)</code>
+
+%p
+  You can <code>tail -f /var/log/cloud-init-output.log</code> or just sit tight... we'll let you know when it's finished!
+
+%h2 Status
+
+.progress
+  .progress-bar.progress-bar-success.progress-bar-striped.active{ style: 'width:10%' }
+
+.status
+
+.go{ style: 'display:none;margin-top:25px;' }
+  %a.btn.btn-info.btn-lg{ href: '#' }
+    %i.fa.fa-arrow-circle-o-right
+    Go to your new app!
+
+:javascript
+  var updateDOStatus = function() {
+    $.getJSON('/status.json', function(data) {
+      if (data.status == 'new') {
+        $('.status').text('1. creating droplet...');
+        $('.progress-bar').css('width', '20%');
+        setTimeout(updateDOStatus, 10000);
+      } else if (data.status == 'active') {
+        $('.status').text('2. starting droplet...');
+        $('.progress-bar').css('width', '30%');
+        $('#host').text('root@' + data.ip);
+        updateDropletStatus(data.ip);
+      } else {
+        $('.status').text('There was an error. (status=' + data.status + ')');
+        $('.progress-bar').removeClass('active');
+      }
+    });
+  };
+
+  var updateDropletStatus = function(ip) {
+    $.getJSON('http://' + ip + ':33333/status.jsonp?callback=?', function(data) {
+      if (data.status == 'installing') {
+        $('.status').text('3. installing software...');
+        $('.progress-bar').css('width', '50%');
+        setTimeout(function() { updateDropletStatus(ip) }, 10000);
+      } else if (data.status == 'complete') {
+        $('.status').text('4. finished!');
+        $('.progress-bar').css('width', '100%').removeClass('active');
+        $('.go').show().find('a').prop('href', 'http://' + ip);
+      } else {
+        $('.status').text('There was an error. (status=' + data.status + ')');
+        $('.progress-bar').removeClass('active');
+      }
+    });
+  };
+
+  updateDOStatus();
+
+:css
+  .log { height: 300px; overflow: auto; }

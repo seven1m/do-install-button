@@ -1,0 +1,46 @@
+!!! html
+%html
+  %head
+    %meta{ charset: 'utf-8' }
+    %title DO Install Button
+    %link{ rel: 'stylesheet', href: '//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' }
+    %link{ rel: 'stylesheet', href: '//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css' }
+    %script{ src: 'http://code.jquery.com/jquery-2.1.1.min.js' }
+    :css
+      header { border-bottom: 1px solid #eee; }
+      main { margin-top: 25px; }
+      .room {
+        margin: 35px 5px;
+        padding: 0;
+        border: 1px solid #eee;
+        border-radius: 5px;
+      }
+      .room h2 {
+        margin: 0 0 15px 0;
+        padding: 5px 25px;
+        background-color: #eee;
+      }
+      .room .content {
+        padding: 25px;
+      }
+      .room button {
+        display: block;
+        width: 100%;
+      }
+      .discreet {
+        font-size: smaller;
+        color: #777;
+      }
+      pre.log {
+        margin-top: 15px;
+      }
+  %body
+    .row
+      .col-md-offset-4.col-md-4
+        %header
+          %h1.text-muted
+            %a{ href: '/' } DO Install Button
+    %main
+      .row
+        .col-md-offset-4.col-md-4
+          = yield

@@ -1,0 +1,58 @@
+.room
+  %h2 Install #{@installer.config['name'] || '(no name; set the :name key in the config)'}
+
+  .content
+    %form{ action: '/install', method: 'POST' }
+      %input{ type: 'hidden', name: 'url', value: params[:url] }
+      %table.table
+        %tr
+          %th Name:
+          %td= @installer.config['name']
+        %tr
+          %th Repo:
+          %td
+            %a{ href: @installer.repo }= @installer.repo
+            (<a href="#{@installer.url}">config</a>)
+        %tr
+          %th Image:
+          %td= @installer.config['image']
+        %tr
+          %th Size:
+          %td
+            %select{ name: 'size' }
+              - @installer.memory_options.each do |slug|
+                %option{ value: slug }= slug
+        %tr
+          %th Region:
+          %td
+            %select{ name: 'region' }
+              - @installer.region_options.each do |id, name|
+                %option{ value: id, selected: @installer.region == id }= name
+            .discreet
+              (only regions supporting metdata and CloudConfig)
+
+      .form-group
+        %input#agree{ type: 'checkbox', name: 'agree' }
+        %label{ for: 'agree' } I agree with the <a href="/terms">terms</a>.
+
+      %button.btn.btn-success#go{ style: 'display:none' }
+        %i.fa.fa-cloud-download
+        %strong Install #{@installer.config['name'] || '?'}
+        on a new Droplet
+
+    %p.discreet{ style: 'margin-top:20px' }
+      Note: clicking "I agree" above will set a referral code cookie
+      on www.digitalocean.com and give us credit towards our hosting
+      bill if you are a new customer. If you don't like that, you can
+      host this tool yourself by <a href="x">downloading it here</a>.
+
+:javascript
+  $('#agree').change(function() {
+    if ($(this).is(':checked')) {
+      $('body').append('<iframe src="#{SIGN_UP_URL}" style="visibility:hidden;height:0;"></iframe>');
+      $('#go').show();
+    } else {
+      $('iframe').remove();
+      $('#go').hide();
+    }
+  });

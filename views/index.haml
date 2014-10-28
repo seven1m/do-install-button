@@ -1,0 +1,19 @@
+%p
+  This is an <strong>experimental</strong> installer for getting apps running quickly on
+  <a href="#{SIGN_UP_URL}">DigitalOcean</a>.
+
+%p{ style: 'font-style:italic' }
+  This tool is built by people who love DigitalOcean, but it is not affiliated with DigitalOcean™ Inc.
+  If you have trouble using this tool, please do not contact DO for support.
+  Instead, you may <a href="x">file a bug</a>.
+
+%h2 Install an App
+
+%p
+  Find an app that has a <code>Cloud.config</code> file on GitHub and paste the project URL below:
+
+%form{ action: '/install', method: 'GET' }
+  .form-group
+    %input.form-control#url{ name: 'url', value: params[:url], placeholder: 'https://github.com/org/app' }
+  .form-group
+    %button.btn.btn-success Go!

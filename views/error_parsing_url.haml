@@ -1,0 +1,13 @@
+%h2 Error
+
+%p
+  There was an error parsing the URL:
+
+%pre
+  = params[:url]
+
+%p
+  Did you paste the GitHub project URL?
+
+%p
+  %a.btn.btn-success{ href: '/' } Try again
