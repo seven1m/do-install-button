@@ -4,7 +4,7 @@ require 'haml'
 require 'rest_client'
 require 'json'
 require 'yaml'
-require 'pry'
+# require 'pry'
 require './installer'
 
 config = YAML.load(File.read('config.yml'))
