@@ -4,7 +4,7 @@ require 'haml'
 require 'rest_client'
 require 'json'
 require 'yaml'
-# require 'pry'
+require 'pry'
 require './installer'
 
 config = YAML.load(File.read('config.yml'))
@@ -29,9 +29,8 @@ get '/terms' do
 end
 
 get '/install' do
-  puts request.referer
   begin
-    @installer = Installer.new(request.referer,params[:url])
+    @installer = Installer.new(params[:url])
   rescue Installer::URLParseError
     haml :error_parsing_url
   rescue Installer::ConfigFetchError

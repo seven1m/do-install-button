@@ -10,10 +10,10 @@
 %h2 Install an App
 
 %p
-  Find an app that has a <code>Cloud.config</code> file on GitHub and paste the project URL below:
+  Find an app that has a <code>app.yml</code> file on GitHub and paste the project URL below:
 
 %form{ action: '/install', method: 'GET' }
   .form-group
-    %input.form-control#url{ name: 'url', value: params[:url], placeholder: 'https://github.com/org/app' }
+    %input.form-control#url{ name: 'url', value: params[:url], placeholder: 'org/app' }
   .form-group
     %button.btn.btn-success Go!

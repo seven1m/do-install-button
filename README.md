@@ -4,6 +4,11 @@ This is an **experimental** installer for getting apps running quickly on Digita
 
 This tool is written by DO fans, and is not affiliated with DigitalOcean Inc.
 
+## Usage
+[![Deploy](public/button.png)](http://installer.71m.us?url=churchio/onebody)
+
+`[![Deploy](http://installer.71m.us)](http://installer.71m.us?url=org/repo)`
+
 ## Setup
 
 ```
