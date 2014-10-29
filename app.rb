@@ -29,8 +29,9 @@ get '/terms' do
 end
 
 get '/install' do
+  puts request.referer
   begin
-    @installer = Installer.new(params[:url])
+    @installer = Installer.new(request.referer,params[:url])
   rescue Installer::URLParseError
     haml :error_parsing_url
   rescue Installer::ConfigFetchError

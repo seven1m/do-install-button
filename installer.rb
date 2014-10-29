@@ -2,7 +2,8 @@ require 'rest_client'
 require 'json'
 
 class Installer
-  GITHUB_PROJECT_REGEX = /github\.com\/([a-z0-9_-]+)\/([a-z0-9_-]+)/i
+  GITHUB_PROJECT_REGEX = /([a-z0-9_-]+)\/([a-z0-9_-]+)/i
+  GITHUB_REF_REGEX = /github.com\/([a-z0-9_-]+)\/([a-z0-9_-]+)/i
 
   MEMORY = %w(512mb 1gb 2gb 4gb 8gb)
   REGIONS = {
@@ -21,8 +22,12 @@ class Installer
   attr_reader :raw_config, :droplet
   attr_accessor :url, :config, :size, :region, :auth_token, :droplet_id
 
-  def initialize(url=nil)
+  def initialize(ref=nil,url=nil)
+    puts ref
+    puts url
+    return if ref.to_s.strip == ''
     return if url.to_s.strip == ''
+    (_, @user, @project) = GITHUB_REF_REGEX.match(ref).to_a
     (_, @user, @project) = GITHUB_PROJECT_REGEX.match(url).to_a
     unless @user and @project
       raise URLParseError.new("could not parse as a GitHub project url: #{url}")
