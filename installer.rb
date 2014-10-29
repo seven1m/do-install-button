@@ -2,7 +2,7 @@ require 'rest_client'
 require 'json'
 
 class Installer
-  GITHUB_PROJECT_REGEX = /github\.com\/([a-z0-9_-]+)\/([a-z0-9_-]+)/i
+  GITHUB_PROJECT_REGEX = /([a-z0-9_-]+)\/([a-z0-9_-]+)/i
 
   MEMORY = %w(512mb 1gb 2gb 4gb 8gb)
   REGIONS = {
@@ -27,7 +27,7 @@ class Installer
     unless @user and @project
       raise URLParseError.new("could not parse as a GitHub project url: #{url}")
     end
-    @url = "https://raw.githubusercontent.com/#{@user}/#{@project}/master/Cloud.config"
+    @url = "https://raw.githubusercontent.com/#{@user}/#{@project}/master/app.yml"
     get_config
   end
 
