@@ -27,7 +27,7 @@ class Installer
     unless @user and @project
       raise URLParseError.new("could not parse as a GitHub project url: #{url}")
     end
-    @url = "https://raw.githubusercontent.com/#{@user}/#{@project}/master/Cloud.config"
+    @url = "https://raw.githubusercontent.com/#{@user}/#{@project}/master/app.yml"
     get_config
   end
 
