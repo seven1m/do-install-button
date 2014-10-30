@@ -1,0 +1,13 @@
+name: do-install-button
+image: ubuntu-14-04-x64
+config:
+  #cloud-config
+  packages:
+    - git
+    - ruby
+  runcmd:
+    - gem install bundler
+    - mkdir /var/www
+    - cd /var/www && git clone git://github.com/seven1m/do-install-button.git && cd do-install-button && bundle install
+    - cd /var/www/do-install-button && mv config.yml.example config.yml
+    - cd /var/www/do-install-button && nohup rackup -p 80 &
