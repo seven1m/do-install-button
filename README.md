@@ -6,6 +6,11 @@ This tool is written by DO fans, and is not affiliated with DigitalOcean Inc.
 
 ## Make your app installable with this tool
 
+First, a few of words of warning:
+
+* This is *very* experimental. I've literally only tested this with one config file for [one app](https://github.com/churchio/onebody).
+* I think this only works with Ubuntu, but may also work with Debian.
+
 Add a file named `app.yml` to the root of your project on GitHub, like so:
 
 ```yaml
