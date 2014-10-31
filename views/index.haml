@@ -2,12 +2,17 @@
   This is an <strong>experimental</strong> installer for getting apps running quickly on
   <a href="#{SIGN_UP_URL}">DigitalOcean</a>.
 
-%p{ style: 'font-style:italic' }
-  This tool is built by people who love DigitalOcean, but it is not affiliated with DigitalOcean™ Inc.
-  If you have trouble using this tool, please do not contact DO for support.
-  Instead, you may <a href="https://github.com/seven1m/do-install-button/issues">file a bug</a>.
+%h2 Install this app
 
-%h2 Install an App
+%p
+  Give it a try. Click the button below to install this app on a
+  DigitalOcean droplet in just a few minutes!
+
+%p
+  %a{ href: '/install?url=https://github.com/seven1m/do-install-button' }
+    %img{ src: '/button.svg' }
+
+%h2 Install another app
 
 %p
   Find an app that has an <code>app.yml</code> file on GitHub
@@ -16,7 +21,15 @@
   or paste the project URL below:
 
 %form{ action: '/install', method: 'GET' }
-  .form-group
-    %input.form-control#url{ name: 'url', value: params[:url], placeholder: 'https://github.com/org/app' }
-  .form-group
-    %button.btn.btn-success Go!
+  .row
+    .col-md-10
+      .form-group
+        %input.form-control#url{ name: 'url', value: params[:url], placeholder: 'https://github.com/org/app' }
+    .col-md-2
+      .form-group
+        %button.btn.btn-success{ style: 'margin-left:-25px' } Go!
+
+%p.discreet
+  This tool is built by people who love DigitalOcean, but it is not affiliated with DigitalOcean™ Inc.
+  If you have trouble using this tool, please do not contact DO for support.
+  Instead, you may <a href="https://github.com/seven1m/do-install-button/issues">file a bug</a>.

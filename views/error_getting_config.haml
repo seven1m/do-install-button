@@ -1,10 +1,10 @@
 %h2 Error
 
 %p
-  There was an error getting the URL:
+  There was an error getting the <code>app.yml</code> config for the repo at:
 
 %pre
-  = @installer.url
+  = params[:url]
 
 %p
   Are you sure this project supports the DO Install Button?

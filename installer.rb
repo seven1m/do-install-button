@@ -140,17 +140,21 @@ class Installer
     raise ConfigFetchError.new("could not fetch config from #{@url}")
   end
 
+  def set_status(status)
+    "echo '{\"status\":\"#{status}\"}' > /tmp/do-install-button-status.json"
+  end
+
   def commands_with_status(commands)
     commands ||= []
     [
-      'apt-get install -y -q ruby',
-      "echo '{\"status\":\"installing\"}' > /tmp/do-install-button-status.json",
-      'ruby -rwebrick -e "server=WEBrick::HTTPServer.new(:Port => 33333, :DocumentRoot => %(/tmp/non-existent-fake-path)); server.mount_proc(%(/status.jsonp)) { |req, res| res.body = %(#{req.query_string.match(/callback=(\w+)/)[1]}(#{File.read(%(/tmp/do-install-button-status.json))})) }; server.start" &'
+      set_status('installing'),
+      "apt-get install -y -q ruby || #{set_status('error')}",
+      'ruby -rwebrick -e "server=WEBrick::HTTPServer.new(:Port => 33333, :DocumentRoot => %(/tmp/non-existent-fake-path)); server.mount_proc(%(/status.jsonp)) { |req, res| res.body = %(#{req.query_string.match(/callback=(\w+)/)[1]}(#{File.read(%(/tmp/do-install-button-status.json))})) }; server.start" &',
     ] +
-    commands +
+    commands.map { |c| c =~ /&\s*$/ ? c : "#{c} || #{set_status('error')}" } +
     [
-      "echo '{\"status\":\"complete\"}' > /tmp/do-install-button-status.json",
-      'sleep 60; kill -9 %(ps aux | grep "[w]ebrick.*33333" | awk "{ print $2 }")'
+      "! grep 'error' /tmp/do-install-button-status.json && #{set_status('complete')}",
+      'sleep 60; kill -9 $(ps aux | grep "[w]ebrick.*33333" | awk "{ print $2 }")'
     ]
   end
 

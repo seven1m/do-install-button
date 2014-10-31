@@ -17,42 +17,71 @@
     Go to your new app!
 
 :javascript
-  var updateDOStatus = function() {
-    $.getJSON('/status.json', function(data) {
-      if (data.status == 'new') {
-        $('.status').text('1. creating droplet...');
-        $('.progress-bar').css('width', '20%');
-        setTimeout(updateDOStatus, 10000);
-      } else if (data.status == 'active') {
-        $('.status').text('2. starting droplet...');
-        $('.progress-bar').css('width', '30%');
-        $('#host').text('root@' + data.ip);
-        updateDropletStatus(data.ip);
-      } else {
-        $('.status').text('There was an error. (status=' + data.status + ')');
-        $('.progress-bar').removeClass('active');
+  var last_pct = 0;
+  function progress(pct, active, type) {
+    pct = pct || last_pct;
+    last_pct = pct;
+    type = type || 'success';
+    $('.progress-bar').css('width', pct + '%');
+    $('.progress-bar').removeClass('progress-bar-success progress-bar-danger').addClass('progress-bar-' + type);
+    if (active) $('.progress-bar').addClass('active');
+    else $('.progress-bar').removeClass('active');
+  };
+
+  var updateDOStatus = function(delay) {
+    delay = delay || 10000;
+    $.ajax({
+      url: '/status.json',
+      dataType: 'json',
+      timeout: 5000,
+      success: function(data) {
+        if (data.ip) $('#host').text('root@' + data.ip);
+        if (data.status == 'new') {
+          $('.status').text('creating droplet...');
+          progress(20, true);
+          setTimeout(updateDOStatus, 10000);
+        } else if (data.status == 'active') {
+          $('.status').text('starting droplet...');
+          progress(30, true);
+          updateDropletStatus(data.ip);
+        } else {
+          $('.status').text('There was an error. (status=' + data.status + ')');
+          progress(null, false, 'danger');
+        }
+      },
+      error: function(_xhr, status) {
+        setTimeout(function() { updateDOStatus(delay * 1.2) }, delay);
       }
     });
   };
 
-  var updateDropletStatus = function(ip) {
-    var waiting = true;
-    $.getJSON('http://' + ip + ':33333/status.jsonp?callback=?', function(data) {
-      waiting = false;
-      if (data.status == 'installing') {
-        $('.status').text('3. installing software...');
-        $('.progress-bar').css('width', '50%');
-        setTimeout(function() { updateDropletStatus(ip) }, 10000);
-      } else if (data.status == 'complete') {
-        $('.status').text('4. finished!');
-        $('.progress-bar').css('width', '100%').removeClass('active');
-        $('.go').show().find('a').prop('href', 'http://' + ip);
-      } else {
-        $('.status').text('There was an error. (status=' + data.status + ')');
-        $('.progress-bar').removeClass('active');
+  var updateDropletStatus = function(ip, delay) {
+    delay = delay || 10000;
+    var req = $.ajax({
+      url: 'http://' + ip + ':33333/status.jsonp?callback=?',
+      dataType: 'jsonp',
+      timeout: 5000,
+      success: function(data) {
+        if (data.status == 'installing') {
+          $('.status').text('installing software...');
+          progress(50, true);
+          setTimeout(function() { updateDropletStatus(ip) }, 10000);
+        } else if (data.status == 'error') {
+          $('.status').text('There was an error. Please check /var/log/cloud-init-output.log for more information.');
+          progress(null, false, 'danger');
+        } else if (data.status == 'complete') {
+          $('.status').text('finished!');
+          progress(100, false);
+          $('.go').show().find('a').prop('href', 'http://' + ip);
+        } else {
+          $('.status').text('There was an error. (status=' + data.status + ')');
+          progress(null, false, 'danger');
+        }
+      },
+      error: function(_xhr, status) {
+        setTimeout(function() { updateDropletStatus(ip, delay * 1.2) }, delay);
       }
     });
-    setTimeout(function() { if (waiting) updateDropletStatus(ip) }, 20000); // retry
   };
 
   updateDOStatus();
