@@ -1,8 +1,8 @@
 %p
-  You can log into your new Droplet at: <code id="host">(waiting)</code>
+  You can ssh into your new Droplet at: <code id="host">(waiting)</code>
 
 %p
-  You can <code>tail -f /var/log/cloud-init-output.log</code> or just sit tight... we'll let you know when it's finished!
+  You can <a id="console-link" href="#" target="_blank"><i class="fa fa-caret-square-o-right"></i> view the console</a> or just sit tight... we'll let you know when it's finished!
 
 %h2 Status
 
@@ -36,6 +36,7 @@
       timeout: 5000,
       success: function(data) {
         if (data.ip) $('#host').text('root@' + data.ip);
+        if (data.id) $('#console-link').prop('href', 'https://cloud.digitalocean.com/droplets/' + data.id + '/console');
         if (data.status == 'new') {
           $('.status').text('creating droplet...');
           progress(20, true);

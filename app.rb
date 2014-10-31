@@ -84,6 +84,7 @@ get '/status.json' do
   installer = Installer.from_json(session[:config])
   installer.auth_token = session[:token]
   status = {
+    id:       installer.droplet_id,
     ip:       installer.droplet_ip,
     status:   installer.droplet_status
   }
