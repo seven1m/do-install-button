@@ -21,6 +21,7 @@ enable :show_exceptions if development?
 set :session_secret, config['cookie_secret']
 
 get '/' do
+  @configured = config['client_id'] != 'your-do-client-id'
   haml :index
 end
 

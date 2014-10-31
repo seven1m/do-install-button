@@ -1,3 +1,8 @@
+- unless @configured
+  .alert.alert-danger
+    %strong This app has not been configured!
+    You need to edit the <code>config.yml</code> file before using this tool.
+
 %p
   This is an <strong>experimental</strong> installer for getting apps running quickly on
   <a href="#{SIGN_UP_URL}">DigitalOcean</a>.
