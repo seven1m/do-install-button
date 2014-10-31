@@ -33,7 +33,7 @@
               - @installer.region_options.each do |id, name|
                 %option{ value: id, selected: @installer.region == id }= name
             .discreet
-              (only regions supporting metdata and CloudConfig)
+              (only regions supporting metadata and CloudConfig)
 
       .form-group
         %input#agree{ type: 'checkbox', name: 'agree' }
