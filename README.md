@@ -1,6 +1,12 @@
 # DO Install Button
 
+[![Install on DigitalOcean](http://installer.71m.us/button.svg)](http://installer.71m.us/install?url=https://github.com/seven1m/do-install-button)
+
 This is an **experimental** installer for getting apps running quickly on DigitalOcean.
+
+![Install Page](https://raw.githubusercontent.com/seven1m/do-install-button/master/public/images/install_page.png)
+
+![Status Page](https://raw.githubusercontent.com/seven1m/do-install-button/master/public/images/status_page.png)
 
 This tool is written by DO fans, and is not affiliated with DigitalOcean Inc.
 
