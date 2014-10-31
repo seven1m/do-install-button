@@ -52,9 +52,15 @@ post '/install' do
     installer.size = params[:size]
     session[:config] = installer.as_json
     if installer.auth_token = session[:token]
-      installer.go!
-      session[:config] = installer.as_json
-      redirect '/status'
+      begin
+        installer.go!
+      rescue RestClient::Unauthorized
+        session[:token] = nil
+        redirect "https://cloud.digitalocean.com/v1/oauth/authorize?response_type=code&client_id=#{CLIENT_ID}&redirect_uri=#{CALLBACK_URL}&scope=read+write"
+      else
+        session[:config] = installer.as_json
+        redirect '/status'
+      end
     else
       redirect "https://cloud.digitalocean.com/v1/oauth/authorize?response_type=code&client_id=#{CLIENT_ID}&redirect_uri=#{CALLBACK_URL}&scope=read+write"
     end
