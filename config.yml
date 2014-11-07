@@ -1,5 +1,5 @@
-client_id: ENV['CLIENT_ID']
-client_secret: ENV['CLIENT_SECRET']
-cookie_secret: ENV['COOKIE_SECRET']
-ref_code: ENV['REF_CODE']
-this_host: ENV['THIS_HOST']
+client_id: <%= ENV['CLIENT_ID'] %>
+client_secret: <%= ENV['CLIENT_SECRET'] %>
+cookie_secret: <%= ENV['COOKIE_SECRET'] %>
+ref_code: <%= ENV['REF_CODE'] %>
+this_host: <%= ENV['THIS_HOST'] %>
