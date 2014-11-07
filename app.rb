@@ -3,11 +3,13 @@ require 'sinatra'
 require 'haml'
 require 'rest_client'
 require 'json'
+require 'erb'
 require 'yaml'
 require 'pry'
 require './installer'
 
-config = YAML.load(File.read('config.yml'))
+template = ERB.new File.new('config.yml').read
+config = YAML.load template.result(binding)
 
 CALLBACK_URL  = "#{config['this_host']}/auth/callback"
 SIGN_UP_URL   = "https://www.digitalocean.com/?refcode=#{config['ref_code']}"
