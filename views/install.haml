@@ -2,6 +2,16 @@
   This is an <strong>experimental</strong> installer for getting apps running quickly on
   <a href="#{SIGN_UP_URL}">DigitalOcean</a>.
 
+.alert.alert-warning
+  %p
+    %strong Install an SSH key first.
+  %p
+    There is a <a href="https://github.com/churchio/onebody/issues/349">bug we're working on</a>
+    that prevents the app from being installed unless you first
+    <a href="https://cloud.digitalocean.com/ssh_keys">add an SSH key</a> to your DigitalOcean account.
+  %p
+    We're very sorry about this and hope to have it fixed soon.
+
 .room
   %h2 Install #{@installer.config['name'] || '(no name; set the :name key in the config)'}
 
