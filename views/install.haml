@@ -17,6 +17,7 @@
 
   .content
     %form{ action: '/install', method: 'POST' }
+      %input{ type: 'hidden', name: 'token', value: session[:csrf_token] }
       %input{ type: 'hidden', name: 'url', value: params[:url] }
       %table.table
         %tr
