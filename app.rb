@@ -22,6 +22,10 @@ enable :show_exceptions if development?
 
 set :session_secret, config['cookie_secret']
 
+def csrf_token_matches?(token)
+  token.to_s != '' && token == session[:csrf_token]
+end
+
 get '/' do
   @configured = config['client_id'] != 'your-do-client-id'
   haml :index
@@ -41,11 +45,13 @@ get '/install' do
   rescue Installer::ConfigParseError
     haml :error_parsing_config
   else
+    session[:csrf_token] = SecureRandom.hex
     haml :install
   end
 end
 
 post '/install' do
+  return [400, 'invalid token'] unless csrf_token_matches?(params[:token])
   begin
     installer = Installer.new(params[:url])
   rescue
