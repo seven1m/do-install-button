@@ -17,6 +17,7 @@ class Installer
   class URLParseError    < StandardError; end
   class ConfigFetchError < StandardError; end
   class ConfigParseError < StandardError; end
+  class NoSSHKeyError    < StandardError; end
 
   attr_reader :raw_config, :droplet
   attr_accessor :url, :config, :size, :region, :auth_token, :droplet_id
@@ -117,11 +118,9 @@ class Installer
   def payload_for_deploy
     merged_config.dup.tap do |payload|
       do_config = payload.delete('config')
-
       do_config['runcmd'] = commands_with_status(do_config['runcmd'])
-
       payload['user_data'] = "#cloud-config\n" + YAML.dump(do_config)
-
+      fail NoSSHKeyError, 'You must create an SSH key on DigitalOcean first.' if keys.empty?
       payload['ssh_keys'] = [keys.first['id']] if keys.one? # TODO give the user a chance to select one if they have multiple keys
     end
   end

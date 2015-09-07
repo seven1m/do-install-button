@@ -86,9 +86,14 @@ get '/auth/callback' do
   session[:token] = JSON.parse(result)['access_token']
   installer = Installer.from_json(session[:config])
   installer.auth_token = session[:token]
-  installer.go!
-  session[:config] = installer.as_json
-  redirect '/status'
+  begin
+    installer.go!
+  rescue Installer::NoSSHKeyError
+    haml :error_no_ssh_key
+  else
+    session[:config] = installer.as_json
+    redirect '/status'
+  end
 end
 
 get '/status' do
