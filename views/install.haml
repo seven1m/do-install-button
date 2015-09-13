@@ -10,13 +10,6 @@
       %input{ type: 'hidden', name: 'token', value: session[:csrf_token] }
       %input{ type: 'hidden', name: 'url', value: params[:url] }
 
-      .alert.alert-warning
-        %p
-          %strong Install an SSH key first.
-        %p
-          You <strong>must</strong> <a href="https://cloud.digitalocean.com/ssh_keys">create an SSH key</a>
-          in your DigitalOcean account first. If you do not, this installation will fail.
-
       %table.table
         %tr
           %th Name:

@@ -1,0 +1,29 @@
+%h2 Create an SSH Key first
+
+%p
+  You do not have an SSH key set up in your DigitalOcean account.
+  You can do that <a href="https://cloud.digitalocean.com/ssh_keys" target="_blank">here</a>.
+
+%p
+  Here are some guides to help:
+
+%ul
+  %li
+    %a{ href: 'https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-putty-on-digitalocean-droplets-windows-users', target: '_blank' }
+      for Windows users
+  %li
+    %a{ href: 'https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets', target: '_blank' }
+      for Mac and Linux users
+
+%h3 Try again...
+
+%p
+  Once you've added an SSH key, click the button below to start the install:
+
+%p
+  %form{ action: '/install', method: 'POST' }
+    %input{ type: 'hidden', name: 'token', value: session[:csrf_token] }
+    %button.btn.btn-success#go
+      %i.fa.fa-cloud-upload
+      %strong Install #{@installer.config['name'] || '?'}
+      on a new Droplet

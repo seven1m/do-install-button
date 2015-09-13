@@ -53,19 +53,25 @@ end
 post '/install' do
   return [400, 'invalid token'] unless csrf_token_matches?(params[:token])
   begin
-    installer = Installer.new(params[:url])
+    if params[:url]
+      installer = Installer.new(params[:url])
+      installer.region = params[:region]
+      installer.size = params[:size]
+      session[:config] = installer.as_json
+    else
+      installer = Installer.from_json(session[:config])
+    end
   rescue
     haml :error_generic
   else
-    installer.region = params[:region]
-    installer.size = params[:size]
-    session[:config] = installer.as_json
     if installer.auth_token = session[:token]
       begin
         installer.go!
       rescue RestClient::Unauthorized
         session[:token] = nil
         redirect "https://cloud.digitalocean.com/v1/oauth/authorize?response_type=code&client_id=#{CLIENT_ID}&redirect_uri=#{CALLBACK_URL}&scope=read+write"
+      rescue Installer::NoSSHKeyError
+        redirect '/add_ssh_key'
       else
         session[:config] = installer.as_json
         redirect '/status'
@@ -89,11 +95,16 @@ get '/auth/callback' do
   begin
     installer.go!
   rescue Installer::NoSSHKeyError
-    haml :error_no_ssh_key
+    redirect '/add_ssh_key'
   else
     session[:config] = installer.as_json
     redirect '/status'
   end
+end
+
+get '/add_ssh_key' do
+  @installer = Installer.from_json(session[:config])
+  haml :add_ssh_key
 end
 
 get '/status' do

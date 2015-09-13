@@ -35,10 +35,11 @@ class Installer
   def self.from_json(json)
     json = JSON.parse(json) if json.is_a?(String)
     Installer.new.tap do |installer|
+      config = json['config'].dup
       installer.url        = json['url']
-      installer.region     = json['config'].delete('region')
-      installer.size       = json['config'].delete('size')
-      installer.config     = json['config']
+      installer.region     = config.delete('region')
+      installer.size       = config.delete('size')
+      installer.config     = config
       installer.droplet_id = json['droplet_id']
     end
   end
