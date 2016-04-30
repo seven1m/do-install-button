@@ -59,8 +59,8 @@
   var updateDropletStatus = function(ip, delay) {
     delay = delay || 10000;
     var req = $.ajax({
-      url: 'http://' + ip + ':33333/status.jsonp?callback=?',
-      dataType: 'jsonp',
+      url: '/status-proxy.json',
+      dataType: 'json',
       timeout: 5000,
       success: function(data) {
         if (data.status == 'installing') {

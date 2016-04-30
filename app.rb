@@ -7,6 +7,7 @@ require 'erb'
 require 'yaml'
 require 'pry'
 require './installer'
+require 'net/http'
 
 template = ERB.new File.new('config.yml').read
 config = YAML.load template.result(binding)
@@ -121,4 +122,17 @@ get '/status.json' do
   }
   content_type :json
   status.to_json
+end
+
+get '/status-proxy.json' do
+  installer = Installer.from_json(session[:config])
+  installer.auth_token = session[:token]
+  ip =  installer.droplet_ip
+  url = URI.parse('http://' + ip + ':33333/status.json')
+  req = Net::HTTP::Get.new(url.to_s)
+  res = Net::HTTP.start(url.host, url.port) {|http|
+    http.request(req)
+  }
+  content_type :json
+  res.body
 end

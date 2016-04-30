@@ -149,7 +149,7 @@ class Installer
     [
       set_status('installing'),
       "apt-get install -y -q ruby || #{set_status('error')}",
-      'ruby -rwebrick -e "server=WEBrick::HTTPServer.new(:Port => 33333, :DocumentRoot => %(/tmp/non-existent-fake-path)); server.mount_proc(%(/status.jsonp)) { |req, res| res.body = %(#{req.query_string.match(/callback=(\w+)/)[1]}(#{File.read(%(/tmp/do-install-button-status.json))})) }; server.start" &',
+      'ruby -rwebrick -e "server=WEBrick::HTTPServer.new(:Port => 33333, :DocumentRoot => %(/tmp/non-existent-fake-path)); server.mount_proc(%(/status.json)) { |req, res| res.body = %(#{File.read(%(/tmp/do-install-button-status.json))}) }; server.start" &',
     ] +
     commands.map { |c| c =~ /&\s*$/ ? c : "#{c} || #{set_status('error')}" } +
     [
