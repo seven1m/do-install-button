@@ -37,29 +37,37 @@
             .discreet
               (only regions supporting metadata and CloudConfig)
 
-      .form-group
-        %input#agree{ type: 'checkbox', name: 'agree' }
-        %label{ for: 'agree' } I agree with the <a href="/terms">terms</a>.
-
-      %button.btn.btn-success#go{ style: 'display:none' }
+      %button.btn.btn-success#go
         %i.fa.fa-cloud-upload
         %strong Install #{@installer.config['name'] || '?'}
         on a new Droplet
 
-    %p.discreet{ style: 'margin-top:20px' }
-      Note: clicking "I agree" above will set a referral code cookie
-      on www.digitalocean.com and give us credit towards our hosting
-      bill if you are a new customer. If you don't like that, you can
-      host this tool yourself by
-      <a href="https://github.com/seven1m/do-install-button">downloading it here</a>.
+      #sign-up{ style: 'display:none' }
+        / DO used to allow us to set the referral cookie via an iframe, but they took that away, so now we have this madness.
+        %p <i class="fa fa-frown-o"></i> Looks like you don't have an account on DO.
+        %p
+          %a.btn.btn-warning{ href: SIGN_UP_URL }
+            %i.fa.fa-sign-in
+            Please
+            %strong Sign Up
+            at DigitalOcean
+        %p ...and then come back.
 
 :javascript
-  $('#agree').change(function() {
-    if ($(this).is(':checked')) {
-      $('body').append('<iframe src="#{SIGN_UP_URL}" style="visibility:hidden;height:0;"></iframe>');
-      $('#go').show();
-    } else {
-      $('iframe').remove();
+  var selects = $('select');
+  var m = document.cookie.match(/selections=([^;]+)/);
+  if (m) {
+    m[1].split(',').forEach(function(value, i) {
+      $(selects[i]).val(value);
+    });
+  }
+  $('form').submit(function(e) {
+    if (!document.cookie.match(/loggedIn=true/)) {
+      e.preventDefault();
+      var selections = selects.map(function() { return $(this).val() }).toArray();
+      document.cookie = 'selections=' + selections.join(',')
+      document.cookie = 'loggedIn=true; expires=Thu, 31-Dec-2020 00:00:01 GMT;';
+      $('#sign-up').show();
       $('#go').hide();
     }
-  });
+  })
