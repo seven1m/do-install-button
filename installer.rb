@@ -6,12 +6,18 @@ class Installer
 
   MEMORY = %w(512mb 1gb 2gb 4gb 8gb)
   REGIONS = {
-    'NYC3' => 'New York 3',
-    'SFO1' => 'San Francisco 1',
-    'SGP1' => 'Singapore 1',
     'AMS2' => 'Amsterdam 2',
     'AMS3' => 'Amsterdam 3',
-    'LON1' => 'London 1'
+    'BLR1' => 'Bangalore 1',
+    'FRA1' => 'Frankfurt 1',
+    'LON1' => 'London 1',
+    'NYC1' => 'New York 1',
+    'NYC2' => 'New York 2',
+    'NYC3' => 'New York 3',
+    'SFO1' => 'San Francisco 1',
+    'SFO2' => 'San Francisco 2',
+    'SGP1' => 'Singapore 1',
+    'TOR1' => 'Toronto 1'
   }
 
   class URLParseError    < StandardError; end
