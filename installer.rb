@@ -128,7 +128,7 @@ class Installer
       do_config['runcmd'] = commands_with_status(do_config['runcmd'])
       payload['user_data'] = "#cloud-config\n" + YAML.dump(do_config)
       fail NoSSHKeyError, 'You must create an SSH key on DigitalOcean first.' if keys.empty?
-      payload['ssh_keys'] = [keys.first['id']] if keys.one? # TODO give the user a chance to select one if they have multiple keys
+      payload['ssh_keys'] = keys.map { |k| k['id'] }
     end
   end
 
