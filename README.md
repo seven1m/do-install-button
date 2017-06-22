@@ -55,4 +55,4 @@ rackup
 
 ## Copyright
 
-Copyright 2014 Tim Morgan. See LICENSE file in this directory.
+Copyright (c) Tim Morgan. See LICENSE file in this directory.
