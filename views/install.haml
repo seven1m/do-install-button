@@ -26,14 +26,14 @@
           %th Size:
           %td
             %select{ name: 'size' }
-              - @installer.memory_options.each do |slug|
-                %option{ value: slug }= slug
+              - @installer.size_options.each do |slug, amount|
+                %option{ value: slug }= "#{amount}mb (#{slug})"
         %tr
           %th Region:
           %td
             %select{ name: 'region' }
-              - @installer.region_options.each do |id, name|
-                %option{ value: id, selected: @installer.region == id }= name
+              - @installer.region_options.each do |slug, name|
+                %option{ value: slug, selected: @installer.region == slug }= name
             .discreet
               (only regions supporting metadata and CloudConfig)
 

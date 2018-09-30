@@ -37,16 +37,16 @@
       success: function(data) {
         if (data.ip) $('#host').text('root@' + data.ip);
         if (data.id) $('#console-link').prop('href', 'https://cloud.digitalocean.com/droplets/' + data.id + '/console');
-        if (data.status == 'new') {
+        if (data.droplet == 'new') {
           $('.status').text('creating droplet...');
           progress(20, true);
           setTimeout(updateDOStatus, 10000);
-        } else if (data.status == 'active') {
+        } else if (data.droplet == 'active') {
           $('.status').text('starting droplet...');
           progress(30, true);
           updateDropletStatus(data.ip);
         } else {
-          $('.status').text('There was an error. (status=' + data.status + ')');
+          $('.status').text('There was an error. (status=' + data.droplet + ')');
           progress(null, false, 'danger');
         }
       },
@@ -59,23 +59,25 @@
   var updateDropletStatus = function(ip, delay) {
     delay = delay || 10000;
     var req = $.ajax({
-      url: 'http://' + ip + ':33333/status.jsonp?callback=?',
-      dataType: 'jsonp',
+      url: '/status.json',
+      dataType: 'json',
       timeout: 5000,
       success: function(data) {
-        if (data.status == 'installing') {
+        if (!data.status) {
+          $('.status').text('There was an error. (status=' + JSON.stringify(data.status) + ')');
+        } else if (data.status.status == 'installing') {
           $('.status').text('installing software...');
           progress(50, true);
           setTimeout(function() { updateDropletStatus(ip) }, 10000);
-        } else if (data.status == 'error') {
+        } else if (data.status.status == 'error') {
           $('.status').text('There was an error. Please check /var/log/cloud-init-output.log for more information.');
           progress(null, false, 'danger');
-        } else if (data.status == 'complete') {
+        } else if (data.status.status == 'complete') {
           $('.status').text('finished!');
           progress(100, false);
           $('.go').show().find('a').prop('href', 'http://' + ip);
         } else {
-          $('.status').text('There was an error. (status=' + data.status + ')');
+          $('.status').text('There was an error. (status=' + JSON.stringify(data.status) + ')');
           progress(null, false, 'danger');
         }
       },

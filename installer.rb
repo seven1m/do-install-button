@@ -5,21 +5,9 @@ require 'yaml'
 class Installer
   GITHUB_PROJECT_REGEX = /(?:githubusercontent|github)\.com\/([a-z0-9_-]+)\/([a-z0-9_-]+)/i
 
-  MEMORY = %w(512mb 1gb 2gb 4gb 8gb)
-  REGIONS = {
-    'AMS2' => 'Amsterdam 2',
-    'AMS3' => 'Amsterdam 3',
-    'BLR1' => 'Bangalore 1',
-    'FRA1' => 'Frankfurt 1',
-    'LON1' => 'London 1',
-    'NYC1' => 'New York 1',
-    'NYC2' => 'New York 2',
-    'NYC3' => 'New York 3',
-    'SFO1' => 'San Francisco 1',
-    'SFO2' => 'San Francisco 2',
-    'SGP1' => 'Singapore 1',
-    'TOR1' => 'Toronto 1'
-  }
+  MAX_SIZE = 8192 # just to keep people from being dumb
+  SIZES = JSON.parse(File.read('sizes.json'))
+  REGIONS = JSON.parse(File.read('regions.json'))
 
   class URLParseError    < StandardError; end
   class ConfigFetchError < StandardError; end
@@ -81,26 +69,43 @@ class Installer
     )
   end
 
-  def memory_options
-    MEMORY[MEMORY.index(@config['min_size'] || '512mb')..-1]
+  def size_options
+    sizes = SIZES.select { |k, v| v <= MAX_SIZE } 
+    sizes.select { |k, v| v >= min_size }
+  end
+
+  def min_size
+    return 0 unless (size = @config['min_size'])
+    if size =~ /gb\z/i
+      size.to_i * 1024
+    else
+      size.to_i
+    end
   end
 
   def region_options
-    REGIONS
+    REGIONS.sort_by { |k, v| v }
   end
 
   def repo
     "https://github.com/#{@user}/#{@project}"
   end
 
+  def account
+    url = 'https://api.digitalocean.com/v2/account'
+    get(url)
+  end
+
   def sizes
-    url = 'https://api.digitalocean.com/v2/sizes'
+    url = 'https://api.digitalocean.com/v2/sizes?per_page=100'
     @sizes ||= get(url)['sizes'].each_with_object({}) { |s, h| h[s['slug']] = s['memory'] }
   end
 
   def regions
-    url = 'https://api.digitalocean.com/v2/regions'
-    @regions ||= get(url)['regions'].each_with_object({}) { |r, h| h[r['slug']] = r['name'] }
+    url = 'https://api.digitalocean.com/v2/regions?per_page=100'
+    @regions ||= get(url)['regions']
+      .select { |r| r['features'].include?('metadata') }
+      .each_with_object({}) { |r, h| h[r['slug']] = r['name'] }
   end
 
   def go!
@@ -128,7 +133,12 @@ class Installer
   end
 
   def droplet_ip
-    droplet_info['networks']['v4'].first['ip_address']
+    droplet_info['networks']['v4'].first['ip_address'] rescue nil
+  end
+
+  def install_status
+    return {} unless droplet_active?
+    JSON.parse(RestClient.get("http://#{droplet_ip}:33333/status.jsonp?callback=callback").strip.sub(/\Acallback\(/, '').sub(/\)\z/, ''))
   end
 
   private
