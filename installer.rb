@@ -93,6 +93,16 @@ class Installer
     "https://github.com/#{@user}/#{@project}"
   end
 
+  def sizes
+    url = 'https://api.digitalocean.com/v2/sizes'
+    @sizes ||= get(url)['sizes'].each_with_object({}) { |s, h| h[s['slug']] = s['memory'] }
+  end
+
+  def regions
+    url = 'https://api.digitalocean.com/v2/regions'
+    @regions ||= get(url)['regions'].each_with_object({}) { |r, h| h[r['slug']] = r['name'] }
+  end
+
   def go!
     url = 'https://api.digitalocean.com/v2/droplets'
     response = post(url, payload_for_deploy)
