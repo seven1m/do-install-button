@@ -1,8 +1,9 @@
 require 'rest_client'
 require 'json'
+require 'yaml'
 
 class Installer
-  GITHUB_PROJECT_REGEX = /github\.com\/([a-z0-9_-]+)\/([a-z0-9_-]+)/i
+  GITHUB_PROJECT_REGEX = /(?:githubusercontent|github)\.com\/([a-z0-9_-]+)\/([a-z0-9_-]+)/i
 
   MEMORY = %w(512mb 1gb 2gb 4gb 8gb)
   REGIONS = {
@@ -28,14 +29,29 @@ class Installer
   attr_reader :raw_config, :droplet
   attr_accessor :url, :config, :size, :region, :auth_token, :droplet_id
 
-  def initialize(url=nil)
+  def initialize(url = nil)
     return if url.to_s.strip == ''
+    parse_user_and_project(url)
+    build_config_url(url)
+    get_config
+  end
+
+  def parse_user_and_project(url)
     (_, @user, @project) = GITHUB_PROJECT_REGEX.match(url).to_a
-    unless @user and @project
+    unless @user && @project
       raise URLParseError.new("could not parse as a GitHub project url: #{url}")
     end
-    @url = "https://raw.githubusercontent.com/#{@user}/#{@project}/master/app.yml"
-    get_config
+  end
+
+  def build_config_url(url)
+    case url
+    when %r{/blob/(.+)/app\.yml\z}
+      @url = "https://raw.githubusercontent.com/#{@user}/#{@project}/#{$1}/app.yml"
+    when /app\.yml\z/
+      @url = url
+    else
+      @url = "https://raw.githubusercontent.com/#{@user}/#{@project}/master/app.yml"
+    end
   end
 
   def self.from_json(json)
@@ -137,7 +153,8 @@ class Installer
     @raw_config = RestClient.get(url)
     begin
       @config = YAML.load(@raw_config)
-    rescue
+    rescue => e
+      raise e
       raise ConfigParseError.new("could not parse config from:\n\n#{@raw_config}")
     else
       @region = 'NYC3'
